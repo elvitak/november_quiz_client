@@ -1,23 +1,12 @@
-import React, { useState } from "react";
-import Quizzes from "./modules/Quizzes";
-import CategorySelector from "./components/Categoryselector";
-import DifficultySelector from "./components/Difficultyselector";
+import React from "react";
+import { useSelector } from "react-redux";
+import CreateQuizForm from "./components/CreateQuizForm";
 
 const App = () => {
-  const [quiz, setQuiz] = useState({});
-  const [category, setCategory] = useState();
-  const [difficulty, setDifficulty] = useState();
-
-  const createQuiz = async () => {
-    const data = await Quizzes.create({
-      category: category,
-      difficulty: difficulty,
-    });
-    setQuiz(data.quiz);
-  };
+  const { quiz } = useSelector((state) => state);
 
   let questionList;
-  
+
   if (quiz.questions) {
     questionList = quiz.questions.map((question, index) => {
       return <li key={index}>{question.question}</li>;
@@ -26,12 +15,11 @@ const App = () => {
 
   return (
     <>
-      <CategorySelector onCategoryChange={setCategory} />
-      <DifficultySelector onDifficultyChange={setDifficulty} />
-      <button data-cy="create-button" onClick={createQuiz}>
-        Create Quiz
-      </button>
-      <div data-cy="quiz-list">{questionList}</div>
+      {!quiz.questions ? (
+        <CreateQuizForm />
+      ) : (
+        <div data-cy="quiz-list">{questionList}</div>
+      )}
     </>
   );
 };
